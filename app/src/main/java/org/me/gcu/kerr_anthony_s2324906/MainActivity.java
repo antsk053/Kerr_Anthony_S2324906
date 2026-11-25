@@ -13,6 +13,7 @@ package org.me.gcu.kerr_anthony_s2324906;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,5 +61,23 @@ public class MainActivity extends AppCompatActivity {
         refreshButton.setOnClickListener(v -> viewModel.loadAll(clientId, clientKey));
 
         viewModel.startAutoUpdate(clientId, clientKey);
+
+
+        Button mapButton = findViewById(R.id.mapButton);
+        View mapContainer = findViewById(R.id.map_container);
+        FragmentManager fm = getSupportFragmentManager();
+
+// Tapping Map puts the map fragment in the overlay; the Back button removes it again
+        mapButton.setOnClickListener(v -> fm.beginTransaction()
+                .replace(R.id.map_container, new SituationMapFragment())
+                .addToBackStack("map")
+                .commit());
+
+// The overlay is visible only while the map is on the back stack
+        fm.addOnBackStackChangedListener(() ->
+                mapContainer.setVisibility(fm.getBackStackEntryCount() > 0 ? View.VISIBLE : View.GONE));
+        mapContainer.setVisibility(fm.getBackStackEntryCount() > 0 ? View.VISIBLE : View.GONE);
+
+
     }
 }
