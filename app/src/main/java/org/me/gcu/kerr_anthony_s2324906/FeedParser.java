@@ -13,6 +13,22 @@ import java.util.ArrayList;
 public class FeedParser {
 
     public ArrayList<Situation> parse(String xmlText, String category) {
+
+
+        // TEST LOGGING (temporary): raw feed facts, counted without using the parser
+        int testRawCount = 0;
+        int testPos = xmlText.indexOf("<situation ");
+        while (testPos != -1) {
+            testRawCount++;
+            testPos = xmlText.indexOf("<situation ", testPos + 1);
+        }
+        Log.d("TEST", category + " raw situations in feed: " + testRawCount);
+        int testFirst = xmlText.indexOf("<situation ");
+        if (testFirst != -1) {
+            Log.d("TEST", category + " first raw situation: "
+                    + xmlText.substring(testFirst, Math.min(xmlText.length(), testFirst + 3500)));
+        }
+
         ArrayList<Situation> situations = new ArrayList<>();
         Situation current = null;
         boolean inComment = false;

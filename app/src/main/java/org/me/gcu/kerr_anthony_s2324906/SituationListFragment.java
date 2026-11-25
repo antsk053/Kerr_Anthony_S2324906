@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,7 @@ public class SituationListFragment extends Fragment {
     private SituationAdapter adapter;
     private EditText searchBox;
 
+    private TextView countText;
 
     private ArrayList<Situation> incidents = new ArrayList<>();
     private ArrayList<Situation> roadworks = new ArrayList<>();
@@ -40,6 +42,7 @@ public class SituationListFragment extends Fragment {
         Button incidentsButton = view.findViewById(R.id.incidentsButton);
         Button roadworksButton = view.findViewById(R.id.roadworksButton);
         searchBox = view.findViewById(R.id.searchBox);
+        countText = view.findViewById(R.id.countText);
 
         adapter = new SituationAdapter(requireContext(), new ArrayList<>());
         situationList.setAdapter(adapter);
@@ -99,6 +102,7 @@ public class SituationListFragment extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
+        countText.setText("Showing " + adapter.getCount() + " of " + source.size());
     }
 
 
