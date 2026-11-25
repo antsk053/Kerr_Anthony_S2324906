@@ -16,7 +16,7 @@ public class TrafficViewModel extends AndroidViewModel {
     private static final String ROADWORKS_URL = "https://datex2.trafficscotland.org/rest/2.3/publications/CurrentRoadworks/Content.xml";
 
     // 1 hour. Make it shorter (e.g. 60 * 1000) for testing and the demo video.
-    private static final long UPDATE_INTERVAL_MS = 60 * 1000;
+    private static final long UPDATE_INTERVAL_MS = 60 * 60 * 1000;
 
     private final TrafficRepo repository;
     private final Handler updateHandler = new Handler(Looper.getMainLooper());
@@ -25,6 +25,19 @@ public class TrafficViewModel extends AndroidViewModel {
     private final MutableLiveData<ArrayList<Situation>> incidents = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<Situation>> roadworks = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showingSavedCopy = new MutableLiveData<>(false);
+
+    private final MutableLiveData<Situation> selected = new MutableLiveData<>();
+
+    public LiveData<Situation> getSelected() {
+        return selected;
+    }
+
+    public void select(Situation situation) {
+        selected.setValue(situation);
+    }
+
+
+
 
     public TrafficViewModel(Application application) {
         super(application);

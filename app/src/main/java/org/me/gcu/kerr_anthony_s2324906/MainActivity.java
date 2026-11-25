@@ -13,9 +13,6 @@ package org.me.gcu.kerr_anthony_s2324906;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -26,9 +23,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-public class MainActivity extends AppCompatActivity implements OnClickListener {
-    private TextView rawDataDisplay;
-    private Button startButton;
+public class MainActivity extends AppCompatActivity {
     private TrafficViewModel viewModel;
 
     // Traffic Scotland id and key, read from the manifest (the values come from local.properties)
@@ -45,10 +40,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Set up the links to the graphical components
-        rawDataDisplay = (TextView) findViewById(R.id.rawDataDisplay);
-        startButton = (Button) findViewById(R.id.startButton);
-        startButton.setOnClickListener(this);
 
         try {
             Bundle metaData = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA).metaData;
@@ -59,14 +50,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
 
         viewModel = new ViewModelProvider(this).get(TrafficViewModel.class);
-        viewModel.getIncidents().observe(this, list -> Log.d("Parser", "Incidents received: " + list.size()));
-        viewModel.getRoadworks().observe(this, list -> Log.d("Parser", "Roadworks received: " + list.size()));
-        viewModel.getShowingSavedCopy().observe(this, saved -> Log.d("Parser", "Showing saved copy: " + saved));
-        viewModel.startAutoUpdate(clientId, clientKey);
-    }
 
-    @Override
-    public void onClick(View aview) {
-        viewModel.loadAll(clientId, clientKey);
+        TextView statusText = findViewById(R.id.statusText);
+        viewModel.getShowingSavedCopy().observe(this, saved ->
+                statusText.setText(saved ? "Offline: showing the last saved data" : ""));
+
+        Button refreshButton = findViewById(R.id.refreshButton);
+        refreshButton.setOnClickListener(v -> viewModel.loadAll(clientId, clientKey));
+
+        viewModel.startAutoUpdate(clientId, clientKey);
     }
 }
