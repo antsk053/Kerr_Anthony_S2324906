@@ -24,6 +24,15 @@
             android:text="Roadworks" />
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/searchBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search by road (e.g. A9)"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLines="1" />
+
     <ListView
         android:id="@+id/situationList"
         android:layout_width="match_parent"

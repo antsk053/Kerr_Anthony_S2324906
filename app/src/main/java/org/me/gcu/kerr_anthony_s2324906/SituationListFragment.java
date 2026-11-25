@@ -1,8 +1,11 @@
 package org.me.gcu.kerr_anthony_s2324906;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -16,9 +19,12 @@ public class SituationListFragment extends Fragment {
 
     private TrafficViewModel viewModel;
     private SituationAdapter adapter;
-    private boolean showingIncidents = true;
+    private EditText searchBox;
+
+
     private ArrayList<Situation> incidents = new ArrayList<>();
     private ArrayList<Situation> roadworks = new ArrayList<>();
+    private boolean showingIncidents = true;
 
     public SituationListFragment() {
         super(R.layout.fragment_situation_list);
@@ -30,39 +36,73 @@ public class SituationListFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(TrafficViewModel.class);
 
-        ListView listView = view.findViewById(R.id.situationList);
+        ListView situationList = view.findViewById(R.id.situationList);
         Button incidentsButton = view.findViewById(R.id.incidentsButton);
         Button roadworksButton = view.findViewById(R.id.roadworksButton);
+        searchBox = view.findViewById(R.id.searchBox);
 
         adapter = new SituationAdapter(requireContext(), new ArrayList<>());
-        listView.setAdapter(adapter);
+        situationList.setAdapter(adapter);
+
+
+        situationList.setOnItemClickListener((parent, v, position, id) ->
+                viewModel.select(adapter.getItem(position)));
 
         viewModel.getIncidents().observe(getViewLifecycleOwner(), list -> {
-            incidents = list;
-            showList();
+            if (list != null) {
+                incidents = list;
+                showList();
+            }
         });
+
         viewModel.getRoadworks().observe(getViewLifecycleOwner(), list -> {
-            roadworks = list;
-            showList();
+            if (list != null) {
+                roadworks = list;
+                showList();
+            }
         });
 
         incidentsButton.setOnClickListener(v -> {
             showingIncidents = true;
             showList();
         });
+
         roadworksButton.setOnClickListener(v -> {
             showingIncidents = false;
             showList();
         });
 
-        listView.setOnItemClickListener((parent, v, position, id) -> {
-            viewModel.select(adapter.getItem(position));
+
+        searchBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                showList();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
         });
     }
 
+
     private void showList() {
+        String query = searchBox.getText().toString().trim().toLowerCase();
+        ArrayList<Situation> source = showingIncidents ? incidents : roadworks;
+
         adapter.clear();
-        adapter.addAll(showingIncidents ? incidents : roadworks);
+        for (Situation s : source) {
+            if (query.isEmpty() || matches(s, query)) {
+                adapter.add(s);
+            }
+        }
         adapter.notifyDataSetChanged();
+    }
+
+
+    private boolean matches(Situation s, String query) {
+        return s.getRoad() != null && s.getRoad().toLowerCase().contains(query);
     }
 }

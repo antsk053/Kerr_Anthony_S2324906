@@ -38,7 +38,7 @@
         android:name="org.me.gcu.kerr_anthony_s2324906.SituationListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="2" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/detail_container"
